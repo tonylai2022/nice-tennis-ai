@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Vite
+.vite/
+
+# Python
+.venv-yolo/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Models
+*.onnx
+*.pt
+
+# Allow shipping the browser pose model with the web build.
+# (Vercel can only serve what is in the repo/build output.)
+!public/models/*.onnx
+
+# Build artifacts
+tsconfig.tsbuildinfo

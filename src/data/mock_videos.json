@@ -1,0 +1,87 @@
+[
+  {
+    "id": "ref_novak_bh",
+    "title": "Novak Djokovic Backhand (Side View)",
+    "description": "Professional reference for two-handed backhand technique. Observe the shoulder turn and racket drop.",
+    "url": "/reference_videos/novak-backhand-sideview.mp4",
+    "thumbnailUrl": "",
+    "uploadedBy": "Admin",
+    "uploadedAt": "2026-01-07T12:00:00Z",
+    "tags": [
+      "tennis",
+      "backhand",
+      "pro",
+      "side-view"
+    ],
+    "sport": "tennis",
+    "duration": 0
+  },
+  {
+    "id": "ref_novak_fh",
+    "title": "Novak Djokovic Forehand (Side View)",
+    "description": "Professional reference for forehand topspin generation. Note the wrist lag and extension.",
+    "url": "/reference_videos/novak-forehand-sideview.mp4",
+    "thumbnailUrl": "",
+    "uploadedBy": "Admin",
+    "uploadedAt": "2026-01-07T12:00:00Z",
+    "tags": [
+      "tennis",
+      "forehand",
+      "pro",
+      "side-view"
+    ],
+    "sport": "tennis",
+    "duration": 0
+  },
+  {
+    "id": "ref_novak_sv",
+    "title": "Novak Djokovic Serve (Side View)",
+    "description": "Professional reference for serve mechanics. Focus on trophy position and leg drive.",
+    "url": "/reference_videos/novak-serve-sideview.mp4",
+    "thumbnailUrl": "",
+    "uploadedBy": "Admin",
+    "uploadedAt": "2026-01-07T12:00:00Z",
+    "tags": [
+      "tennis",
+      "serve",
+      "pro",
+      "side-view"
+    ],
+    "sport": "tennis",
+    "duration": 0
+  },
+  {
+    "id": "ref_tennis_volley",
+    "title": "Professional Tennis Volley",
+    "description": "Net approach volley technique with proper footwork and racket positioning.",
+    "url": "/reference_videos/tennis-volley-demo.mp4",
+    "thumbnailUrl": "",
+    "uploadedBy": "Admin",
+    "uploadedAt": "2026-02-23T12:00:00Z",
+    "tags": [
+      "tennis",
+      "volley",
+      "pro",
+      "net-play"
+    ],
+    "sport": "tennis",
+    "duration": 0
+  },
+  {
+    "id": "ref_tennis_overhead",
+    "title": "Professional Tennis Overhead",
+    "description": "Overhead smash technique with positioning and high contact point demonstration.",
+    "url": "/reference_videos/tennis-overhead-demo.mp4",
+    "thumbnailUrl": "",
+    "uploadedBy": "Admin",
+    "uploadedAt": "2026-02-23T12:00:00Z",
+    "tags": [
+      "tennis",
+      "overhead",
+      "pro",
+      "smash"
+    ],
+    "sport": "tennis",
+    "duration": 0
+  }
+]

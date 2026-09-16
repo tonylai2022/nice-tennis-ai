@@ -1,0 +1,5 @@
+[functions.invite-student]
+verify_jwt = false
+
+[functions.dispatch-lesson-reminders]
+verify_jwt = false
