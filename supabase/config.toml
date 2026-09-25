@@ -1,3 +1,21 @@
+[auth]
+site_url = "https://nice-tennis-ai.vercel.app"
+additional_redirect_urls = [
+	"https://nice-tennis-ai.vercel.app/login",
+	"https://nice-tennis-ai-tennis.vercel.app/login",
+	"http://localhost:5173/login",
+	"https://localhost:5174/login"
+]
+
+[auth.email]
+enable_confirmations = true
+max_frequency = "1m"
+otp_length = 8
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
 [functions.invite-student]
 verify_jwt = false
 

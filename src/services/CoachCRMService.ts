@@ -425,6 +425,12 @@ export const coachCRMService = {
         return data as CRMProfile;
     },
 
+    async linkMyStudentAccount(): Promise<void> {
+        const client = requireSupabase();
+        const { error } = await client.rpc('link_my_student_account');
+        throwIfError(error);
+    },
+
     async signOut() {
         const client = requireSupabase();
         const { error } = await client.auth.signOut({ scope: 'local' });
@@ -926,8 +932,9 @@ export const coachCRMService = {
         const client = requireSupabase();
         const { error: activationError } = await client.rpc('activate_my_student_account');
         throwIfError(activationError);
-        const { data: student, error: studentError } = await client.from('students').select(STUDENT_FIELDS).single();
+        const { data: student, error: studentError } = await client.from('students').select(STUDENT_FIELDS).maybeSingle();
         throwIfError(studentError);
+        if (!student) throw new Error('Your student account is not linked to a coach yet. Ask your coach to invite this email address.');
         const studentId = student.id as string;
         const { data: coachRecords, error: coachRecordsError } = await client.from('coach_records')
             .select(COACH_RECORD_FIELDS)

@@ -153,6 +153,10 @@ export function CoachCRMHome({ onStartAnalysis, onLiveCoaching, onAccountChange,
                 ? await coachCRMService.completeGoogleSignIn(requestedRole)
                 : await coachCRMService.loadProfile(session.user.id);
 
+            if (!requestedRole && nextProfile.role === 'student') {
+                await coachCRMService.linkMyStudentAccount();
+            }
+
             if (requestedRole) {
                 sessionStorage.removeItem(CRM_OAUTH_ROLE_KEY);
                 url.searchParams.delete('crmRole');

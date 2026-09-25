@@ -30,6 +30,10 @@ yarn-error.log*
 # Vite
 .vite/
 
+# Cloud project links (generated per developer/deployment)
+.vercel/
+supabase/.temp/
+
 # Python
 .venv-yolo/
 __pycache__/
@@ -47,3 +51,4 @@ __pycache__/
 
 # Build artifacts
 tsconfig.tsbuildinfo
+.env*
