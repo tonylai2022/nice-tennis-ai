@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FilesetResolver, PoseLandmarker } from '@mediapipe/tasks-vision';
 import { mediaPipeVideoPoseService } from '../services/pose/MediaPipeVideoPoseService';
+import { CameraRecorder } from './CameraRecorder';
 import { StudentVideoAIFeedback, type AIFeedbackPublishPayload } from './StudentVideoAIFeedback';
 
 export type WorkbenchAnnotation =
@@ -44,6 +45,7 @@ export function CoachMediaWorkbench({ onChange, onUseSuggestion, onAIFeedbackCha
     const [status, setStatus] = useState('Attach a photo or video to begin a visual review.');
     const [suggestion, setSuggestion] = useState<string | null>(null);
     const [detecting, setDetecting] = useState(false);
+    const [showCamera, setShowCamera] = useState(false);
     const [liveLandmarks, setLiveLandmarks] = useState<{ x: number; y: number; visibility?: number }[] | null>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const imageRef = useRef<HTMLImageElement>(null);
@@ -185,7 +187,7 @@ export function CoachMediaWorkbench({ onChange, onUseSuggestion, onAIFeedbackCha
         };
     }, [selected?.id, selected?.kind, showSkeleton]);
 
-    const addFiles = (files: FileList | null) => {
+    const addFiles = (files: FileList | readonly File[] | null) => {
         if (!files) return;
         const remaining = MAX_ITEMS - drafts.length;
         const accepted: WorkbenchMediaDraft[] = [];
@@ -205,6 +207,11 @@ export function CoachMediaWorkbench({ onChange, onUseSuggestion, onAIFeedbackCha
             setSelectedId(accepted[0].id);
             setStatus(`${accepted.length} media item${accepted.length > 1 ? 's' : ''} ready for review.`);
         }
+    };
+
+    const handleCameraCapture = (file: File) => {
+        setShowCamera(false);
+        addFiles([file]);
     };
 
     const detectPose = async () => {
@@ -312,7 +319,8 @@ export function CoachMediaWorkbench({ onChange, onUseSuggestion, onAIFeedbackCha
     return <section className="crm-workbench" aria-label="Coach media workbench">
         <div className="crm-panel-heading"><div><p className="crm-eyebrow">Visual feedback workbench</p><h2>Review and mark up</h2></div><span className="crm-count">{drafts.length}/{MAX_ITEMS}</span></div>
         <p className="crm-workbench-status">{status}</p>
-        <div className="crm-workbench-toolbar"><label className="crm-button crm-button-secondary">Add photo<input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={(event) => { addFiles(event.target.files); event.currentTarget.value = ''; }} /></label><label className="crm-button crm-button-secondary">Add video<input type="file" accept="video/mp4,video/quicktime,video/webm" multiple onChange={(event) => { addFiles(event.target.files); event.currentTarget.value = ''; }} /></label><button type="button" className="crm-workbench-tool" onClick={() => { setTool('review'); void videoRef.current?.play().catch(() => undefined); }} data-active={tool === 'review'}>Play video</button><button type="button" className="crm-workbench-tool" onClick={() => setTool('draw')} data-active={tool === 'draw'}>Draw</button><button type="button" className="crm-workbench-tool" onClick={() => setTool('label')} data-active={tool === 'label'}>Label</button><button type="button" className="crm-workbench-tool" onClick={() => setShowSkeleton((value) => !value)} data-active={showSkeleton}>Joints</button></div>
+        <div className="crm-workbench-toolbar"><label className="crm-button crm-button-secondary">Add photo<input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={(event) => { addFiles(event.target.files); event.currentTarget.value = ''; }} /></label><label className="crm-button crm-button-secondary">Add video<input type="file" accept="video/mp4,video/quicktime,video/webm" multiple onChange={(event) => { addFiles(event.target.files); event.currentTarget.value = ''; }} /></label><button type="button" className="crm-button crm-button-secondary" onClick={() => setShowCamera(true)} disabled={drafts.length >= MAX_ITEMS}>Record video</button><button type="button" className="crm-workbench-tool" onClick={() => { setTool('review'); void videoRef.current?.play().catch(() => undefined); }} data-active={tool === 'review'}>Play video</button><button type="button" className="crm-workbench-tool" onClick={() => setTool('draw')} data-active={tool === 'draw'}>Draw</button><button type="button" className="crm-workbench-tool" onClick={() => setTool('label')} data-active={tool === 'label'}>Label</button><button type="button" className="crm-workbench-tool" onClick={() => setShowSkeleton((value) => !value)} data-active={showSkeleton}>Joints</button></div>
+        {showCamera && <CameraRecorder onCapture={handleCameraCapture} onCancel={() => setShowCamera(false)} />}
         {tool === 'label' && <label className="crm-workbench-label">Callout text<input value={label} onChange={(event) => setLabel(event.target.value)} placeholder="Tap media to place this note" /></label>}
         {drafts.length > 0 && <div className="crm-workbench-grid"><div className="crm-media-strip">{drafts.map((draft) => <button type="button" key={draft.id} onClick={() => { setSelectedId(draft.id); setTool('review'); }} className={`crm-media-thumb ${draft.id === selectedId ? 'is-selected' : ''}`}>{draft.kind === 'image' ? <img src={draft.url} alt="Coach attachment" /> : <video src={draft.url} muted preload="metadata" />}<span>{draft.kind === 'image' ? 'Photo' : 'Video'}</span></button>)}</div><div className="crm-media-stage">{selected?.kind === 'image' ? <img ref={imageRef} src={selected.url} alt="Selected coaching attachment" onLoad={() => setStatus('Ready to annotate. Run the pose scan when the player is fully visible.')} /> : <video ref={videoRef} src={selected?.url} controls onLoadedData={() => setStatus('Pause the video on the frame you want to review, then run the pose scan.')} />}<canvas ref={canvasRef} className={tool === 'review' ? 'is-pass-through' : ''} onPointerDown={startAnnotation} onPointerMove={continueAnnotation} onPointerUp={finishAnnotation} onPointerCancel={finishAnnotation} /></div></div>}
         {selected && <div className="crm-workbench-actions"><button type="button" onClick={() => void detectPose()} disabled={detecting} className="crm-button crm-button-primary">{detecting ? 'Scanning pose...' : 'Run AI pose scan'}</button>{selected.kind === 'video' && <StudentVideoAIFeedback key={selected.id} videoUrl={selected.url} fileName={selected.file.name} placement="workbench" onShareChange={onAIFeedbackChange} />}<button type="button" onClick={() => suggestion && onUseSuggestion(suggestion)} disabled={!suggestion} className="crm-button crm-button-secondary">Use suggestion in feedback</button><button type="button" onClick={clearAnnotations} className="crm-text-button">Clear markings</button><button type="button" onClick={removeSelected} className="crm-text-button">Remove media</button></div>}

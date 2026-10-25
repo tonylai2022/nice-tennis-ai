@@ -10,8 +10,6 @@ import { mediaPipeVideoPoseService } from '../services/pose/MediaPipeVideoPoseSe
 import { StudentVideoAIFeedback, type AIFeedbackPublishPayload } from './StudentVideoAIFeedback';
 
 interface CoachCRMHomeProps {
-    onStartAnalysis: () => void;
-    onLiveCoaching: () => void;
     onAccountChange: (account: CRMProfile | null) => void;
     language: 'en' | 'zh';
     onToggleLanguage: () => void;
@@ -67,7 +65,7 @@ async function aiFeedbackFramesToDrafts(payload: AIFeedbackPublishPayload, sourc
     }));
 }
 
-export function CoachCRMHome({ onStartAnalysis, onLiveCoaching, onAccountChange, language, onToggleLanguage }: CoachCRMHomeProps) {
+export function CoachCRMHome({ onAccountChange, language, onToggleLanguage }: CoachCRMHomeProps) {
     const [profile, setProfile] = useState<CRMProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [notice, setNotice] = useState<NoticeState>(null);

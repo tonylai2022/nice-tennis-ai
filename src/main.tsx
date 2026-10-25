@@ -4,8 +4,6 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { PwaInstallPrompt } from './components/PwaInstallPrompt';
-import { UpdatePrompt } from './components/UpdatePrompt';
-import { WeChatWarning } from './components/WeChatWarning';
 import { swManager } from './services/serviceWorkerManager';
 import './index.css';
 
@@ -95,7 +93,5 @@ ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <App />
     <PwaInstallPrompt />
-    <UpdatePrompt />
-    <WeChatWarning />
   </React.StrictMode>
 );

@@ -1,8 +1,8 @@
 import { Download, Share, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { isWeChat } from './WeChatWarning';
 
 const DISMISSED_KEY = 'motionTutor.installPromptDismissed';
+const isWeChat = () => /MicroMessenger/i.test(navigator.userAgent);
 
 interface BeforeInstallPromptEvent extends Event {
     prompt: () => Promise<void>;

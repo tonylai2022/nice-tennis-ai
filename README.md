@@ -1,47 +1,22 @@
 # Nice Tennis AI CRM
 
-Nice Tennis AI CRM is a coach-first client relationship management system for tennis lessons. It helps coaches plan sessions, capture training evidence, review video, approve feedback, and share progress reports with players and parents.
+Nice Tennis AI CRM is a coach-first workspace for managing tennis students, lessons, and coaching feedback. This MVP focuses on the CRM workflow and its media review tools; the previous standalone analysis, live-coaching, calibration, and admin-library screens are archived.
 
-The product supports the workflow behind a modern academy:
+## MVP Features
 
-1. Prepare a lesson around the player's goals and current priorities.
-2. Capture drills, coaching notes, and video during or after the lesson.
-3. Use motion analysis to support the coach's evaluation.
-4. Publish a coach-approved lesson report and next-step plan.
-5. Build a longitudinal player profile that parents and academies can review.
+- **Coach and student workspace** — schedules, student profiles, lesson records, homework, assessments, and growth portfolios.
+- **Feedback authoring** — save coach notes and publish approved feedback with supporting media.
+- **Media workbench** — attach or record video and photos, review movement, annotate frames, and use pose-analysis suggestions.
+- **Mobile support** — responsive CRM pages, camera recording, and an install prompt for supported devices.
 
-MotionTutor does not replace a coach's professional judgement. AI analysis organizes evidence and drafts useful feedback; the coach remains responsible for the final evaluation and published guidance.
-
-## What Exists Today
-
-- **Tennis analysis** — supports serves, forehands, backhands, volleys, overheads, and more.
-- **Video capture and review** — upload or record player video, compare it against pro references, and use split-screen or ghost-overlay playback.
-- **On-device motion analysis** — YOLO, MediaPipe, and ONNX Runtime Web power pose and biomechanical analysis in the browser.
-- **Live coaching** — real-time webcam feedback for selected tennis skills.
-- **Coach-ready feedback** — phase-based observations, movement metrics, drill recommendations, and coach-profile calibration.
-- **Branded reports** — generate professional PDF reports with coach or academy branding, annotated findings, and QR sharing.
-- **Reference video library** — coaches and admins can manage reference clips through Supabase.
-- **Mobile lesson capture** — responsive workflows for phone recordings, including HTTPS local-network testing.
-
-## CRM Roadmap
-
-The next product focus is the client and lesson-management layer that connects existing analysis to coaching operations. See [COACH_CRM_FEATURE_PLAN.md](COACH_CRM_FEATURE_PLAN.md) for the delivery plan, data model, permissions, and acceptance criteria.
-
-| Capability | Outcome | Status |
-|---|---|---|
-| Player profiles | One record for goals, skill level, consent, history, and progress | Planned |
-| Lesson plans and records | A repeatable prepare -> coach -> review -> publish workflow | Planned |
-| Coach approval | AI-generated suggestions become visible externally only after coach review | Planned |
-| Growth archive | Lesson reports, videos, assignments, and milestones in one timeline | Planned |
-| Parent portal | Read-only access to approved reports, player cards, and training media | Planned |
-| Academy dashboard | Coach workload, player follow-up, and progress visibility | Planned |
+AI suggestions are supporting evidence, not a substitute for a coach's professional judgement. Coaches remain responsible for reviewing and approving feedback before sharing it.
 
 ## Tech Stack
 
 - React 18 + TypeScript + Vite
 - Tailwind CSS
-- MediaPipe Tasks Vision & ONNX Runtime Web (on-device inference)
-- Supabase (currently optional — reference video library and cloud PDF storage; planned system of record for CRM data)
+- MediaPipe Tasks Vision (on-device pose analysis)
+- Supabase (authentication, CRM data, and media storage)
 
 ## Getting Started Locally
 
@@ -68,12 +43,11 @@ Edit `.env.local` and set the values you need:
 
 | Variable | Required | Description |
 |---|---|---|
-| `VITE_GEMINI_API_KEY` | Recommended | Google Gemini key for AI coaching feedback |
-| `VITE_SUPABASE_URL` | Optional today | Supabase project URL for reference videos and CRM data |
-| `VITE_SUPABASE_ANON_KEY` | Optional today | Supabase anon key |
-| `VITE_ORT_WASM_BASE_URL` | Optional | Override ONNX Runtime WASM CDN URL |
+| `VITE_GEMINI_API_KEY` | Optional | Google Gemini key for AI coaching feedback |
+| `VITE_SUPABASE_URL` | Required for CRM | Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | Required for CRM | Supabase anon key |
 
-> The analysis experience works without any keys: pose detection and comparison run fully in the browser. AI narrative feedback requires a Gemini key. CRM persistence and parent access will require Supabase configuration.
+> The CRM requires Supabase configuration. AI feedback features also need a Gemini key.
 
 ### 3. Start the dev server
 
@@ -95,7 +69,7 @@ This starts the server with HTTPS and exposes it on your local network. Accept t
 
 ## Route
 
-The public root is intentionally blank. Sign in at `/login`; authenticated CRM pages live under `/dashboard`, with analysis and operations available at their dedicated sub-URLs.
+Sign in at `/` or `/login`. Authenticated CRM pages live under `/dashboard` and its sub-routes.
 
 ## Project Structure
 
@@ -105,18 +79,19 @@ src/
 ├── main.tsx                  # Vite entry point
 ├── index.css                 # Tailwind base styles
 ├── components/
-│   ├── LiveCoachingTennis.tsx
+│   ├── AppHeader.tsx
+│   ├── CoachCRMHome.tsx
+│   ├── CoachMediaWorkbench.tsx
 │   ├── CameraRecorder.tsx
-│   ├── ReferenceLibrary.tsx
-│   ├── ReportDownload.tsx
-│   └── ...
+│   ├── NotFoundPage.tsx
+│   ├── PwaInstallPrompt.tsx
+│   └── ...                   # Active CRM UI dependencies
 └── services/
-    ├── MotionAnalysisRouter.ts   # Routes analysis to the right sport engine
-    ├── motionAnalysis/           # Per-sport pose + phase analysis
-    ├── VideoTutor.ts             # Feedback generation
-    ├── ReferenceVideoService.ts  # Supabase reference video loading
-    └── ReportGenerator.ts        # PDF report builder
+    ├── CoachCRMService.ts     # Authentication and CRM data
+    └── pose/                  # On-device pose support
 ```
+
+Retired features are kept under `src/_archive` and are excluded from the MVP TypeScript entry-point check.
 
 ## Build for Production
 
@@ -132,12 +107,7 @@ npm run preview
 
 ## Supabase Setup (Optional)
 
-Supabase is used for two optional features:
-
-- **Reference video library** — store pro reference clips that coaches or admins upload
-- **PDF report sharing** — upload generated reports to the cloud so QR codes work on any device
-
-It will become required when the CRM modules ship, providing authenticated accounts, player and lesson records, access policies, and secure media storage.
+Supabase provides authentication and CRM persistence for the MVP.
 
 See [SUPABASE_SETUP.md](SUPABASE_SETUP.md) for step-by-step bucket and policy configuration.
 
