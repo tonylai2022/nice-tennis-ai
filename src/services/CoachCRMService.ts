@@ -382,6 +382,7 @@ export const coachCRMService = {
         return () => data.subscription.unsubscribe();
     },
 
+    // 舊的，付費版才會漂亮，留著當備用
     async signInWithGoogle(role: CRMRole) {
         const client = requireSupabase();
         sessionStorage.setItem(CRM_OAUTH_ROLE_KEY, role);
@@ -392,6 +393,18 @@ export const coachCRMService = {
             options: { redirectTo: redirectUrl.toString() },
         });
         throwIfError(error);
+    },
+
+    // 新的，免費版就會顯示 nicetennis.app
+    async signInWithGoogleIdToken(idToken: string, role: CRMRole) {
+        const client = requireSupabase();
+        sessionStorage.setItem(CRM_OAUTH_ROLE_KEY, role);
+        const { data, error } = await client.auth.signInWithIdToken({
+            provider: 'google',
+            token: idToken,
+        });
+        throwIfError(error);
+        return data;
     },
 
     async signInWithPassword(email: string, password: string): Promise<void> {
@@ -445,6 +458,7 @@ export const coachCRMService = {
         return data as CRMProfile;
     },
 
+    // ...下面全部保持你原本的，不動
     async loadCoachStudents(): Promise<Student[]> {
         const client = requireSupabase();
         const { data, error } = await client.from('students').select(STUDENT_FIELDS).order('created_at', { ascending: false });
